@@ -1,24 +1,9 @@
-/*
-Составить программу расчета площади объекта.
-Описание объекта состоит из определенного набора геометрических фигур:
-1) Круг
-2) Правильный треугольник
-3) Квадрат
-4) Прямоугольник
-5) Узор 10 на 10 (матрица 10х10; площадь = сумме единиц)
-6) Шестиугольник (правильный)
-
-Требования:
-- Шаблон функции (sumAreas)
-- Перегрузка функций (getArea)
-- Массив указателей на функции (handlers)
-*/
-
 #include <iostream>
 #include <clocale>
-#include <cmath>
+#include <cmath> // Подключена для std::sqrt(3.0)
 
-// 1. Шаблон функции для суммирования площадей
+// 1. ТРЕБОВАНИЕ: ШАБЛОН ФУНКЦИИ
+// Универсальная функция для суммирования элементов массива любого числового типа
 template <typename T>
 T sumAreas(T arr[], int size) {
     T sum = 0;
@@ -28,29 +13,39 @@ T sumAreas(T arr[], int size) {
     return sum;
 }
 
-// 2. Перегрузка функций getArea под разные типы фигур
+// 2. ТРЕБОВАНИЕ: ПЕРЕГРУЗКА ФУНКЦИЙ 
+// Одно имя getArea, но строго уникальные наборы аргументов под каждую фигуру
 
-// Круг: S = pi * r^2
+// 1. Квадрат: целая сторона (int)
+double getArea(int side) {
+    return static_cast<double>(side * side);
+}
+
+// 2. Правильный треугольник: дробная сторона (double)
+// Формула: (sqrt(3) / 4) * a^2
+double getArea(double side) {
+    return (std::sqrt(3.0) / 4.0) * side * side;
+}
+
+// 3. Прямоугольник: целые ширина и высота (int, int)
+double getArea(int width, int height) {
+    return static_cast<double>(width * height);
+}
+
+// 4. Круг: дробные радиус и число Пи (double, double)
+// Формула: pi * r^2
 double getArea(double radius, double pi) {
     return pi * radius * radius;
 }
 
-// Правильный треугольник: S = (sqrt(3) / 4) * a^2
-double getArea(int side) {
-    return (std::sqrt(3.0) / 4.0) * side * side;
+// 5. Правильный шестиугольник: сторона и число вершин = 6 (double, int)
+// Формула: 6 равносторонних треугольников -> (3 * sqrt(3) / 2) * a^2
+double getArea(double side, int vertices) {
+    return (3.0 * std::sqrt(3.0) / 2.0) * side * side;
 }
 
-// Квадрат: S = a^2
-double getArea(double side) {
-    return side * side;
-}
-
-// Прямоугольник: S = a * b
-double getArea(int height, int width) {
-    return static_cast<double>(height * width);
-}
-
-// Узор 10х10: подсчет количества единиц
+// 6. Узор 10х10: двумерный массив (int[10][10])
+// Подсчет количества единиц по условию ТЗ
 double getArea(int matrix[10][10]) {
     int countOnes = 0;
     for (int i = 0; i < 10; ++i) {
@@ -63,12 +58,8 @@ double getArea(int matrix[10][10]) {
     return static_cast<double>(countOnes);
 }
 
-// Правильный шестиугольник: S = (3 * sqrt(3) / 2) * a^2
-double getArea(double side, int vertices) {
-    return (side * side * 3.0 * std::sqrt(3.0)) / 2.0;
-}
-
-// 3. Подпрограммы ввода параметров для каждой фигуры
+// ФУНКЦИИ-ОБРАБОТЧИКИ ВВОДА
+// Считывают координаты (по ТЗ) и размеры, затем вызывают нужный getArea
 
 double processCircle() {
     int x, y;
@@ -85,11 +76,11 @@ double processCircle() {
 
 double processTriangle() {
     int x, y;
-    int side; // int обеспечивает вызов getArea(int side) для треугольника
+    double side;
 
     std::cout << "Введите координаты вершины (x y): ";
     std::cin >> x >> y;
-    std::cout << "Введите длину стороны треугольника (целое число): ";
+    std::cout << "Введите сторону правильного треугольника: ";
     std::cin >> side;
 
     return getArea(side);
@@ -97,11 +88,11 @@ double processTriangle() {
 
 double processSquare() {
     int x, y;
-    double side; // double обеспечивает вызов getArea(double side) для квадрата
+    int side;
 
     std::cout << "Введите координаты угла (x y): ";
     std::cin >> x >> y;
-    std::cout << "Введите сторону квадрата: ";
+    std::cout << "Введите сторону квадрата (целое число): ";
     std::cin >> side;
 
     return getArea(side);
@@ -109,23 +100,23 @@ double processSquare() {
 
 double processRectangle() {
     int x, y;
-    int width, height; // int соответствует getArea(int, int)
+    int width, height;
 
     std::cout << "Введите координаты угла (x y): ";
     std::cin >> x >> y;
     std::cout << "Введите ширину и высоту (целые числа): ";
     std::cin >> width >> height;
 
-    return getArea(height, width);
+    return getArea(width, height);
 }
 
 double processPattern() {
     int x, y;
-    int matrix[10][10]; // Тип int исключает ошибку компиляции
+    int matrix[10][10];
 
-    std::cout << "Введите координаты левого верхнего угла узора (x y): ";
+    std::cout << "Введите координаты угла узора (x y): ";
     std::cin >> x >> y;
-    std::cout << "Введите элементы матрицы 10х10 (0 или 1, всего 100 чисел):\n";
+    std::cout << "Введите матрицу 10х10 (100 чисел: 0 или 1):\n";
     for (int i = 0; i < 10; ++i) {
         for (int j = 0; j < 10; ++j) {
             std::cin >> matrix[i][j];
@@ -141,23 +132,28 @@ double processHexagon() {
 
     std::cout << "Введите координаты центра (x y): ";
     std::cin >> x >> y;
-    std::cout << "Введите длину стороны правильного шестиугольника: ";
+    std::cout << "Введите сторону правильного шестиугольника: ";
     std::cin >> side;
 
     return getArea(side, 6);
 }
 
-// 4. Тип указателя на функцию и массив обработчиков
+// 3. МАССИВ УКАЗАТЕЛЕЙ НА ФУНКЦИИ
+
+// Синоним типа: указатель на функцию без аргументов, возвращающую double
 typedef double (*FigureFunc)();
 
+// Массив из 6 указателей, инициализированный адресами функций
 FigureFunc handlers[] = {
-    processCircle,
-    processTriangle,
-    processSquare,
-    processRectangle,
-    processPattern,
-    processHexagon
+    processCircle,     // handlers[0] -> пункт 1
+    processTriangle,   // handlers[1] -> пункт 2
+    processSquare,     // handlers[2] -> пункт 3
+    processRectangle,  // handlers[3] -> пункт 4
+    processPattern,    // handlers[4] -> пункт 5
+    processHexagon     // handlers[5] -> пункт 6
 };
+
+// ТОЧКА ВХОДА В ПРОГРАММУ
 
 int main() {
     setlocale(LC_ALL, ".UTF-8");
@@ -171,7 +167,7 @@ int main() {
         return 1;
     }
 
-    // Динамический массив для хранения площадей
+    // Динамический массив под площади
     double* areas = new double[figureCount];
 
     for (int i = 0; i < figureCount; ++i) {
@@ -184,27 +180,29 @@ int main() {
         std::cout << "6. Шестиугольник\n";
         std::cout << "Выберите тип фигуры (1-6): ";
 
-        int choice = 0;
+        int choice;
         std::cin >> choice;
 
         if (choice < 1 || choice > 6) {
-            std::cout << "Неверный пункт! Повторите ввод для этой фигуры.\n";
+            std::cout << "Неверный пункт! Повторите ввод фигуры.\n";
             --i;
             continue;
         }
 
-        // Вызов функции через массив указателей по индексу
+        // Вызов функции через массив указателей
         areas[i] = handlers[choice - 1]();
-        std::cout << "-> Площадь текущей фигуры: " << areas[i] << "\n";
+        std::cout << "-> Посчитанная площадь фигуры: " << areas[i] << "\n";
     }
 
-    // Использование шаблона функции для расчета общей площади
+    // Вызов шаблона функции
     double totalArea = sumAreas(areas, figureCount);
 
     std::cout << "\n============================================\n";
     std::cout << "ОБЩАЯ ПЛОЩАДЬ ОБЪЕКТА: " << totalArea << "\n";
     std::cout << "============================================\n";
 
+    // Очистка динамической памяти
     delete[] areas;
+
     return 0;
 }
