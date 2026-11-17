@@ -5,6 +5,7 @@
 #include <time.h>
 #include <windows.h>
 
+// Функция сжимает отсортированный массив на месте и возвращает новую логическую длину
 int compressArray(int* arr, int n) {
 	if (n <= 0) {
 		return 0;
@@ -31,7 +32,8 @@ int main(void) {
 	const int N = 10;
 
 	int arr[N];
-
+	
+	// Генерируем невозрастающую последовательность
 	arr[0] = rand() % 21 + 10;
 	for (int i = 1; i < N; i++) {
 		arr[i] = arr[i - 1] - (rand() % 4);
@@ -43,6 +45,7 @@ int main(void) {
 	}
 	printf("\n");
 
+	// Имя массива преобразуется в указатель на его первый элемент
 	int new_n = compressArray(arr, N);
 
 	printf("Новая длина: %d\n", new_n);
