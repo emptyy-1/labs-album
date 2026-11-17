@@ -1,59 +1,63 @@
-/* 1 Написать функцию для сжатия отсортированного по невозрастанию массива, оставив каждое число ровно1 раз. Массив предать в функцию с помощью указателя. Дополнительного массива не использовать.
+/*
+1. Написать функцию для сжатия отсортированного по невозрастанию массива,
+оставив каждое число ровно 1 раз. Массив передать в функцию с помощью указателя.
+Дополнительного массива не использовать.
 */
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <windows.h>
 
-// Функция сжимает отсортированный массив на месте и возвращает новую логическую длину
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <clocale>
+
+// Сжимает отсортированный массив на месте и возвращает новую логическую длину
 int compressArray(int* arr, int n) {
-	if (n <= 0) {
-		return 0;
-	}
-	int k = 1;
+    if (n <= 0) {
+        return 0;
+    }
 
-	for (int i = 1; i < n; i++) {
-		if (arr[i] != arr[k - 1]) {
-			arr[k] = arr[i];
-			k++;
-		}
-	}
+    // k — индекс для записи следующего уникального числа (элемент 0 всегда уникален)
+    int k = 1;
 
-	return k;
+    for (int i = 1; i < n; ++i) {
+        // Сравниваем текущий элемент с последним записанным в сжатую часть
+        if (arr[i] != arr[k - 1]) {
+            arr[k] = arr[i];
+            k++;
+        }
+    }
+
+    return k;
 }
 
-int main(void) {
+int main() {
+    std::setlocale(LC_ALL, ".UTF-8");
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
-	SetConsoleCP(65001);
-	SetConsoleOutputCP(65001);
+    const int N = 10;
+    int arr[N];
 
-	srand((unsigned int)time(NULL));
+    // Генерируем невозрастающую последовательность (вычитание 0 создает дубликаты)
+    arr[0] = std::rand() % 21 + 10;
+    for (int i = 1; i < N; ++i) {
+        arr[i] = arr[i - 1] - (std::rand() % 4);
+    }
 
-	const int N = 10;
+    std::cout << "Исходный массив: ";
+    for (int i = 0; i < N; ++i) {
+        std::cout << arr[i] << ' ';
+    }
+    std::cout << '\n';
 
-	int arr[N];
-	
-	// Генерируем невозрастающую последовательность
-	arr[0] = rand() % 21 + 10;
-	for (int i = 1; i < N; i++) {
-		arr[i] = arr[i - 1] - (rand() % 4);
-	}
+    // Имя массива преобразуется в указатель на его первый элемент
+    int new_n = compressArray(arr, N);
 
-	printf("Исходный массив: ");
-	for (int i = 0; i < N; i++) {
-		printf("%d ", arr[i]);
-	}
-	printf("\n");
+    std::cout << "Новая длина: " << new_n << '\n';
+    // Выводим только первые new_n элементов, игнорируя остаток памяти в хвосте
+    std::cout << "Сжатый массив: ";
+    for (int i = 0; i < new_n; ++i) {
+        std::cout << arr[i] << ' ';
+    }
+    std::cout << '\n';
 
-	// Имя массива преобразуется в указатель на его первый элемент
-	int new_n = compressArray(arr, N);
-
-	printf("Новая длина: %d\n", new_n);
-	printf("Сжатый массив: ");
-	for (int i = 0; i < new_n; i++) {
-		printf("%d ", arr[i]);
-	}
-	printf("\n");
-
-	return 0;
+    return 0;
 }
