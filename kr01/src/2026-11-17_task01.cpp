@@ -7,7 +7,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
-#include <clocale>
+#include <windows.h>
 
 // Сжимает отсортированный массив на месте и возвращает новую логическую длину
 int compressArray(int* arr, int n) {
@@ -30,7 +30,8 @@ int compressArray(int* arr, int n) {
 }
 
 int main() {
-    std::setlocale(LC_ALL, ".UTF-8");
+    SetConsoleCP(65001);
+    SetConsoleOutputCP(65001);
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     const int N = 10;
